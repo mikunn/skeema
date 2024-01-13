@@ -74,16 +74,16 @@ defmodule Skeema do
     decoded
   end
 
-  defp do_decode(%_{} = schema, fun) do
-    if is_schema?(schema) do
-      decode_schema(schema, fun)
+  defp do_decode(%_{} = struct, fun) do
+    if is_schema?(struct) do
+      decode_schema(struct, fun)
     else
-      schema
+      struct
     end
   end
 
-  defp do_decode([%{} | _] = schema, fun) do
-    Enum.map(schema, fn item -> do_decode(item, fun) end)
+  defp do_decode([%_{} | _] = list_of_structs, fun) do
+    Enum.map(list_of_structs, fn item -> do_decode(item, fun) end)
   end
 
   defp do_decode(other, _fun) do
