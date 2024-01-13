@@ -76,21 +76,7 @@ defmodule Skeema do
 
   defp do_decode(%_{} = schema, fun) do
     if is_schema?(schema) do
-      map =
-        try do
-          fun.(schema)
-        rescue
-          FunctionClauseError ->
-            Fields.take_all(schema, if_not_loaded: :ignore)
-        end
-
-      if is_map(map) and not is_struct(map) do
-        map
-        |> Enum.map(fn {key, val} -> {key, do_decode(val, fun)} end)
-        |> Enum.into(%{})
-      else
-        schema
-      end
+      decode_schema(schema, fun)
     else
       schema
     end
@@ -102,6 +88,24 @@ defmodule Skeema do
 
   defp do_decode(other, _fun) do
     other
+  end
+
+  defp decode_schema(schema, fun) do
+    decoded_value =
+      try do
+        fun.(schema)
+      rescue
+        FunctionClauseError ->
+          Fields.take_all(schema, if_not_loaded: :ignore)
+      end
+
+    if is_map(decoded_value) and not is_struct(decoded_value) do
+      decoded_value
+      |> Enum.map(fn {key, val} -> {key, do_decode(val, fun)} end)
+      |> Enum.into(%{})
+    else
+      decoded_value
+    end
   end
 
   defp is_schema?(%mod{}) do
