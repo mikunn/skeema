@@ -82,6 +82,12 @@ defmodule Skeema do
     end
   end
 
+  defp do_decode(%{} = map, fun) do
+    map
+    |> Enum.map(fn {key, val} -> {key, do_decode(val, fun)} end)
+    |> Enum.into(%{})
+  end
+
   defp do_decode([%_{} | _] = list_of_structs, fun) do
     Enum.map(list_of_structs, fn item -> do_decode(item, fun) end)
   end
@@ -99,16 +105,16 @@ defmodule Skeema do
           Fields.take_all(schema, if_not_loaded: :ignore)
       end
 
-    if is_map(decoded_value) and not is_struct(decoded_value) do
+    if is_schema?(decoded_value) do
       decoded_value
-      |> Enum.map(fn {key, val} -> {key, do_decode(val, fun)} end)
-      |> Enum.into(%{})
     else
-      decoded_value
+      do_decode(decoded_value, fun)
     end
   end
 
   defp is_schema?(%mod{}) do
     Keyword.has_key?(mod.__info__(:functions), :__schema__)
   end
+
+  defp is_schema?(_), do: false
 end
