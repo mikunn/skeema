@@ -2,11 +2,7 @@
 
 A module to turn a nested Ecto schema into a nested map.
 
-**TODO: Add description**
-
-## Installation
-
-This cannot be found from Hex yet.
+**This project may not be maintained, so please don't depend on this repo!**
 
 ## Usage
 
