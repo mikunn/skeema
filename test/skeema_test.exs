@@ -1,23 +1,3 @@
-defmodule PetOwner do
-  use Ecto.Schema
-
-  @primary_key false
-  embedded_schema do
-    field(:name, :string)
-    embeds_many(:pets, Pet)
-  end
-end
-
-defmodule Pet do
-  use Ecto.Schema
-
-  @primary_key false
-  schema "pet" do
-    field(:species, :string)
-    field(:name, :string)
-  end
-end
-
 defmodule SkeemaTest.TestParentSchema do
   use Ecto.Schema
 
